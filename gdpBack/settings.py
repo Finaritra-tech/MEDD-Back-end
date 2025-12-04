@@ -144,3 +144,11 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = "stangwen4@gmail.com"
 EMAIL_HOST_PASSWORD = "zlbv nuwn ivvq xdvj"
 
+
+AUTH_USER_MODEL = "api.Agent"
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}
