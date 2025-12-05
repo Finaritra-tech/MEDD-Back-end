@@ -1,15 +1,19 @@
 from rest_framework import viewsets, status
 from rest_framework.parsers import MultiPartParser, FormParser
 from django.core.mail import send_mail
-from .serializers import AgentSerializer
+from .serializers import AgentSerializer, LoginSerializer, MissionSerializer
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.contrib.auth import authenticate
-from .serializers import LoginSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from .models import Agent
+from django.http import HttpResponse
+from django.template.loader import get_template
+from xhtml2pdf import pisa
+import io
+
+from .models import Agent, Mission
 
 
 class AgentViewSet(viewsets.ModelViewSet):
@@ -63,3 +67,31 @@ class LoginView(APIView):
             })
 
         return Response({'detail': 'Email ou mot de passe incorrect'}, status=status.HTTP_401_UNAUTHORIZED)
+
+class MissionViewSet(viewsets.ModelViewSet):
+    queryset = Mission.objects.all()
+    serializer_class = MissionSerializer
+
+class MissionGeneratePdfView(APIView):
+    permission_classes = []  # tu peux mettre IsAuthenticated si besoin
+
+    def post(self, request):
+        """
+        Génère un PDF à partir des données envoyées dans request.data
+        """
+        data = request.data
+
+        # Charger le template HTML
+        template = get_template("mission_template.html")  # à créer dans templates/
+        html = template.render(data)
+
+        # Génération PDF
+        result = io.BytesIO()
+        pdf = pisa.CreatePDF(io.StringIO(html), dest=result)
+
+        if pdf.err:
+            return HttpResponse("Erreur lors de la génération du PDF", status=500)
+
+        response = HttpResponse(result.getvalue(), content_type="application/pdf")
+        response["Content-Disposition"] = "attachment; filename=mission.pdf"
+        return response

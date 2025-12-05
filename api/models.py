@@ -58,8 +58,8 @@ class Mission(models.Model):
 
     objet = models.CharField(max_length=255)
     lieu = models.CharField(max_length=100)
-    Date_depart = models.DateField()
-    Date_retour = models.DateField()
+    date_depart = models.DateField()
+    date_retour = models.DateField()
 
     nbr_jours = models.IntegerField(editable=False)   
 
@@ -73,8 +73,8 @@ class Mission(models.Model):
     description = models.TextField(blank=True, null=True)
     motif_rejet = models.TextField(blank=True, null=True)
 
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    cree_le = models.DateTimeField(auto_now_add=True)
+    modifie_le = models.DateTimeField(auto_now=True)
 
     approuve_par = models.ForeignKey(
     Agent, on_delete=models.SET_NULL, null=True, blank=True,
@@ -83,8 +83,8 @@ class Mission(models.Model):
 
 
     def save(self, *args, **kwargs):
-        if self.Date_depart and self.Date_retour:
-            self.nbr_jours = (self.Date_retour - self.Date_depart).days + 1
+        if self.date_depart and self.date_retour:
+            self.nbr_jours = (self.date_retour - self.date_depart).days + 1
         super().save(*args, **kwargs)
 
     def is_directe(self):

@@ -17,19 +17,26 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
-from api.views import AgentViewSet, LoginView
+from api.views import AgentViewSet, LoginView, MissionViewSet
 from django.conf.urls.static import static
 from django.conf import settings
+from api.views import MissionGeneratePdfView
+
+
+
 
 
 router = routers.DefaultRouter()
 router.register(r'agents', AgentViewSet)
+router.register(r'missions', MissionViewSet)
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
     path('api/login/', LoginView.as_view(), name='login'),
+    path('api/missions/generate-pdf/', MissionGeneratePdfView.as_view(), name='mission-pdf'),
+
 ]
 
 if settings.DEBUG:

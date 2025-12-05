@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Agent
+from .models import Agent, Mission
 
 class AgentSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True, min_length=6)
@@ -13,3 +13,8 @@ class AgentSerializer(serializers.ModelSerializer):
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField(write_only=True)
+
+class MissionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Mission
+        fields = '__all__'
