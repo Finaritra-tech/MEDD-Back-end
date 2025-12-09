@@ -14,7 +14,14 @@ class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField(write_only=True)
 
+
 class MissionSerializer(serializers.ModelSerializer):
+    cree_par_nom = serializers.CharField(read_only=True)
+
     class Meta:
         model = Mission
-        fields = '__all__'
+        fields = [
+            'id', 'agent', 'cree_par', 'cree_par_nom', 'objet', 'lieu',
+            'date_depart', 'date_retour', 'nbr_jours', 'status',
+            'description', 'motif_rejet', 'approuve_par'
+        ]

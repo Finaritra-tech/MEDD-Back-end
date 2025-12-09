@@ -50,11 +50,12 @@ class Agent(AbstractBaseUser, PermissionsMixin):
 
 class Mission(models.Model):
     agent = models.ForeignKey(Agent, on_delete=models.CASCADE, related_name='missions')
-
+    
     cree_par = models.ForeignKey(
         Agent, on_delete=models.SET_NULL,
         null=True, blank=True, related_name='missions_creees'
     )
+    cree_par_nom = models.CharField(max_length=100, blank=True, null=True)  # Nouveau champ
 
     objet = models.CharField(max_length=255)
     lieu = models.CharField(max_length=100)
@@ -77,14 +78,19 @@ class Mission(models.Model):
     modifie_le = models.DateTimeField(auto_now=True)
 
     approuve_par = models.ForeignKey(
-    Agent, on_delete=models.SET_NULL, null=True, blank=True,
-    related_name="missions_approuvees"
+        Agent, on_delete=models.SET_NULL, null=True, blank=True,
+        related_name="missions_approuvees"
     )
 
-
     def save(self, *args, **kwargs):
+        # Calcul du nombre de jours
         if self.date_depart and self.date_retour:
             self.nbr_jours = (self.date_retour - self.date_depart).days + 1
+        
+        # Remplissage automatique du nom du créateur
+        if self.cree_par:
+            self.cree_par_nom = self.cree_par.nom
+        
         super().save(*args, **kwargs)
 
     def is_directe(self):

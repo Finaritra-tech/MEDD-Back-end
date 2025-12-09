@@ -35,8 +35,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
     path('api/login/', LoginView.as_view(), name='login'),
-    path('api/missions/generate-pdf/', MissionGeneratePdfView.as_view(), name='mission-pdf'),
-
+    path('api/generate-mission-pdf/', MissionGeneratePdfView.as_view(), name='mission-pdf'),
 ]
 
 if settings.DEBUG:

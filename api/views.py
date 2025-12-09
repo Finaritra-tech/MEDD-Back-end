@@ -14,9 +14,11 @@ from xhtml2pdf import pisa
 import io
 
 from .models import Agent, Mission
-
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from django.db import models
 
 class AgentViewSet(viewsets.ModelViewSet):
+    # permission_classes = [IsAuthenticated]
     queryset = Agent.objects.all()
     serializer_class = AgentSerializer
     parser_classes = (MultiPartParser, FormParser)
@@ -42,6 +44,8 @@ class AgentViewSet(viewsets.ModelViewSet):
         )
 
 class LoginView(APIView):
+
+    # permission_classes = [AllowAny]
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -68,11 +72,100 @@ class LoginView(APIView):
 
         return Response({'detail': 'Email ou mot de passe incorrect'}, status=status.HTTP_401_UNAUTHORIZED)
 
+
+
 class MissionViewSet(viewsets.ModelViewSet):
     queryset = Mission.objects.all()
     serializer_class = MissionSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        return Mission.objects.filter(models.Q(cree_par=user) | models.Q(agent=user))
+
+    def perform_create(self, serializer):
+        serializer.save(cree_par=self.request.user)
+
 
 class MissionGeneratePdfView(APIView):
+    permission_classes = []
+
+    def post(self, request):
+        data = request.data.copy()  # important : copy pour modification
+
+        # --- charger les infos agent ---
+        if "agent" in data and data["agent"]:
+            try:
+                agent_obj = Agent.objects.get(id=data["agent"])
+                data["agent_nom"] = agent_obj.nom
+                data["agent_fonction"] = agent_obj.fonction
+            except Agent.DoesNotExist:
+                data["agent_nom"] = "Inconnu"
+                data["agent_fonction"] = ""
+
+        # --- charger infos créateur ---
+        if "cree_par" in data and data["cree_par"]:
+            try:
+                cree_par_obj = Agent.objects.get(id=data["cree_par"])
+                data["cree_par_nom"] = cree_par_obj.nom
+                data["cree_par_fonction"] = cree_par_obj.fonction
+            except Agent.DoesNotExist:
+                data["cree_par_nom"] = "Inconnu"
+                data["cree_par_fonction"] = ""
+
+        # Charger template PDF
+        template = get_template("mission_template.html")
+        html = template.render(data)
+
+        # Génération PDF
+        result = io.BytesIO()
+        pdf = pisa.CreatePDF(io.StringIO(html), dest=result)
+        if pdf.err:
+            return HttpResponse("Erreur lors de la génération du PDF", status=500)
+
+        response = HttpResponse(result.getvalue(), content_type="application/pdf")
+        response["Content-Disposition"] = "attachment; filename=mission.pdf"
+        return response
+
+    permission_classes = []
+
+    def post(self, request):
+        data = request.data.copy()  # important : copy pour pouvoir écrire dedans
+
+        # --- charger les infos agent ---
+        if "agent" in data and data["agent"]:
+            try:
+                agent_obj = Agent.objects.get(id=data["agent"])
+                data["agent_nom"] = agent_obj.nom
+                data["agent_fonction"] = agent_obj.fonction
+            except Agent.DoesNotExist:
+                data["agent_nom"] = "Inconnu"
+                data["agent_fonction"] = ""
+
+        # --- charger infos créateur ---
+        if "cree_par" in data and data["cree_par"]:
+            try:
+                cree_par_obj = Agent.objects.get(id=data["cree_par"])
+                data["cree_par_nom"] = cree_par_obj.nom
+                data["cree_par_fonction"] = cree_par_obj.fonction
+            except Agent.DoesNotExist:
+                data["cree_par_nom"] = "Inconnu"
+                data["cree_par_fonction"] = ""
+
+        # Charger template PDF
+        template = get_template("mission_template.html")
+        html = template.render(data)
+
+        # Génération PDF
+        result = io.BytesIO()
+        pdf = pisa.CreatePDF(io.StringIO(html), dest=result)
+        if pdf.err:
+            return HttpResponse("Erreur lors de la génération du PDF", status=500)
+
+        response = HttpResponse(result.getvalue(), content_type="application/pdf")
+        response["Content-Disposition"] = "attachment; filename=mission.pdf"
+        return response
+
     permission_classes = []  # tu peux mettre IsAuthenticated si besoin
 
     def post(self, request):
