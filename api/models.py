@@ -82,6 +82,14 @@ class Mission(models.Model):
         related_name="missions_approuvees"
     )
 
+    # destinataire = models.ForeignKey(
+    #     Agent,
+    #     on_delete=models.SET_NULL,
+    #     null=True,
+    #     blank=True,
+    #     related_name='missions_destinees'
+    # )
+
     def save(self, *args, **kwargs):
         # Calcul du nombre de jours
         if self.date_depart and self.date_retour:
