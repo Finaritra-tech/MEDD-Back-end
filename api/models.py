@@ -26,6 +26,7 @@ class Agent(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
     photo = models.ImageField(upload_to='photos/', null=True, blank=True)
     DIRECTION_CHOICES = [
+        ('SG', 'Secrétariat Général'),
         ('DCSI', 'Direction de la Communication et des Systèmes d\'Information'),
         ('DAF', 'Direction Administrative et Financière'),
         ('DPSE', 'Direction de la Planification et du Suivi-Evaluation'),
@@ -55,7 +56,7 @@ class Mission(models.Model):
         Agent, on_delete=models.SET_NULL,
         null=True, blank=True, related_name='missions_creees'
     )
-    cree_par_nom = models.CharField(max_length=100, blank=True, null=True)  # Nouveau champ
+    cree_par_nom = models.CharField(max_length=100, blank=True, null=True)  
 
     objet = models.CharField(max_length=255)
     lieu = models.CharField(max_length=100)
@@ -82,13 +83,15 @@ class Mission(models.Model):
         related_name="missions_approuvees"
     )
 
-    # destinataire = models.ForeignKey(
-    #     Agent,
-    #     on_delete=models.SET_NULL,
-    #     null=True,
-    #     blank=True,
-    #     related_name='missions_destinees'
-    # )
+    destinataire = models.ForeignKey(
+        Agent,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='missions_destinees'
+    )
+
+    destinataire_nom = models.CharField(max_length=100, blank=True, null=True)
 
     def save(self, *args, **kwargs):
         # Calcul du nombre de jours

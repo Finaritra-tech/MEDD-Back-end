@@ -17,11 +17,12 @@ class LoginSerializer(serializers.Serializer):
 
 class MissionSerializer(serializers.ModelSerializer):
     cree_par_nom = serializers.CharField(read_only=True)
-    # destinataire = serializers.PrimaryKeyRelatedField(
-    #     queryset=Agent.objects.filter(is_staff=True),
-    #     allow_null=True,
-    #     required=False
-    # )
+    destinataire = serializers.PrimaryKeyRelatedField(
+        queryset=Agent.objects.filter(is_staff=True),
+        allow_null=True,
+        required=False
+    )
+    destinataire_nom = serializers.CharField(read_only=True)
 
 
     class Meta:
@@ -30,5 +31,5 @@ class MissionSerializer(serializers.ModelSerializer):
             'id', 'agent', 'cree_par', 'cree_par_nom', 'objet', 'lieu',
             'date_depart', 'date_retour', 'nbr_jours', 'status',
             'description', 'motif_rejet', 'approuve_par', 
-            # 'destinataire',
+            'destinataire',
         ]
