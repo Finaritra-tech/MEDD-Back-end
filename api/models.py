@@ -70,7 +70,7 @@ class Mission(models.Model):
         ('Approuvée', 'Approuvée'),
         ('Rejetée', 'Rejetée'),
     ]
-    status = models.CharField(max_length=20, choices=status_choices, default='En attente')
+    status = models.CharField(max_length=20, choices=status_choices)
 
     description = models.TextField(blank=True, null=True)
     motif_rejet = models.TextField(blank=True, null=True)
@@ -92,6 +92,12 @@ class Mission(models.Model):
     )
 
     destinataire_nom = models.CharField(max_length=100, blank=True, null=True)
+
+    destinatairee = models.ForeignKey(
+        Agent, on_delete=models.SET_NULL,
+        null=True, blank=True, related_name='destinatairee_missions'
+    )
+    
 
     def save(self, *args, **kwargs):
         # Calcul du nombre de jours

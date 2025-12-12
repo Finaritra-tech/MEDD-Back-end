@@ -188,3 +188,105 @@ class MissionGeneratePdfView(APIView):
         response = HttpResponse(result.getvalue(), content_type="application/pdf")
         response["Content-Disposition"] = "attachment; filename=mission.pdf"
         return response
+
+class OMissionGeneratePdfView(APIView):
+    permission_classes = []
+
+    def post(self, request):
+        data = request.data.copy()  # important : copy pour modification
+
+        # --- charger les infos agent ---
+        if "agent" in data and data["agent"]:
+            try:
+                agent_obj = Agent.objects.get(id=data["agent"])
+                data["agent_nom"] = agent_obj.nom
+                data["agent_fonction"] = agent_obj.fonction
+            except Agent.DoesNotExist:
+                data["agent_nom"] = "Inconnu"
+                data["agent_fonction"] = ""
+
+        # --- charger infos créateur ---
+        if "cree_par" in data and data["cree_par"]:
+            try:
+                cree_par_obj = Agent.objects.get(id=data["cree_par"])
+                data["cree_par_nom"] = cree_par_obj.nom
+                data["cree_par_fonction"] = cree_par_obj.fonction
+            except Agent.DoesNotExist:
+                data["cree_par_nom"] = "Inconnu"
+                data["cree_par_fonction"] = ""
+
+        # Charger template PDF
+        template = get_template("ordre_de_mission.html")
+        html = template.render(data)
+
+        # Génération PDF
+        result = io.BytesIO()
+        pdf = pisa.CreatePDF(io.StringIO(html), dest=result)
+        if pdf.err:
+            return HttpResponse("Erreur lors de la génération du PDF", status=500)
+
+        response = HttpResponse(result.getvalue(), content_type="application/pdf")
+        response["Content-Disposition"] = "attachment; filename=om.pdf"
+        return response
+
+    permission_classes = []
+
+    def post(self, request):
+        data = request.data.copy()  # important : copy pour pouvoir écrire dedans
+
+        # --- charger les infos agent ---
+        if "agent" in data and data["agent"]:
+            try:
+                agent_obj = Agent.objects.get(id=data["agent"])
+                data["agent_nom"] = agent_obj.nom
+                data["agent_fonction"] = agent_obj.fonction
+            except Agent.DoesNotExist:
+                data["agent_nom"] = "Inconnu"
+                data["agent_fonction"] = ""
+
+        # --- charger infos créateur ---
+        if "cree_par" in data and data["cree_par"]:
+            try:
+                cree_par_obj = Agent.objects.get(id=data["cree_par"])
+                data["cree_par_nom"] = cree_par_obj.nom
+                data["cree_par_fonction"] = cree_par_obj.fonction
+            except Agent.DoesNotExist:
+                data["cree_par_nom"] = "Inconnu"
+                data["cree_par_fonction"] = ""
+
+        # Charger template PDF
+        template = get_template("ordre_de_mission.html")
+        html = template.render(data)
+
+        # Génération PDF
+        result = io.BytesIO()
+        pdf = pisa.CreatePDF(io.StringIO(html), dest=result)
+        if pdf.err:
+            return HttpResponse("Erreur lors de la génération du PDF", status=500)
+
+        response = HttpResponse(result.getvalue(), content_type="application/pdf")
+        response["Content-Disposition"] = "attachment; filename=om.pdf"
+        return response
+
+    permission_classes = []  # tu peux mettre IsAuthenticated si besoin
+
+    def post(self, request):
+        """
+        Génère un PDF à partir des données envoyées dans request.data
+        """
+        data = request.data
+
+        # Charger le template HTML
+        template = get_template("ordre_de_mission.html")  # à créer dans templates/
+        html = template.render(data)
+
+        # Génération PDF
+        result = io.BytesIO()
+        pdf = pisa.CreatePDF(io.StringIO(html), dest=result)
+
+        if pdf.err:
+            return HttpResponse("Erreur lors de la génération du PDF", status=500)
+
+        response = HttpResponse(result.getvalue(), content_type="application/pdf")
+        response["Content-Disposition"] = "attachment; filename=om.pdf"
+        return response

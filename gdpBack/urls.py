@@ -20,7 +20,7 @@ from rest_framework import routers
 from api.views import AgentViewSet, LoginView, MissionViewSet
 from django.conf.urls.static import static
 from django.conf import settings
-from api.views import MissionGeneratePdfView
+from api.views import MissionGeneratePdfView, OMissionGeneratePdfView
 
 
 
@@ -36,6 +36,8 @@ urlpatterns = [
     path('api/', include(router.urls)),
     path('api/login/', LoginView.as_view(), name='login'),
     path('api/generate-mission-pdf/', MissionGeneratePdfView.as_view(), name='mission-pdf'),
+    path('api/om-pdf/', OMissionGeneratePdfView.as_view(), name='om-pdf'),
+
 ]
 
 if settings.DEBUG:

@@ -24,12 +24,11 @@ class MissionSerializer(serializers.ModelSerializer):
     )
     destinataire_nom = serializers.CharField(read_only=True)
 
-
     class Meta:
         model = Mission
         fields = [
             'id', 'agent', 'cree_par', 'cree_par_nom', 'objet', 'lieu',
             'date_depart', 'date_retour', 'nbr_jours', 'status',
             'description', 'motif_rejet', 'approuve_par', 
-            'destinataire',
+            'destinataire', 'destinataire_nom', 'destinatairee'
         ]
