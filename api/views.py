@@ -8,6 +8,8 @@ from rest_framework.response import Response
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 
+from rest_framework.decorators import action
+
 from django.http import HttpResponse
 from django.template.loader import get_template
 from xhtml2pdf import pisa
@@ -18,7 +20,6 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.db import models
 
 class AgentViewSet(viewsets.ModelViewSet):
-    # permission_classes = [IsAuthenticated]
     queryset = Agent.objects.all()
     serializer_class = AgentSerializer
     parser_classes = (MultiPartParser, FormParser)
@@ -75,16 +76,69 @@ class LoginView(APIView):
 
 
 class MissionViewSet(viewsets.ModelViewSet):
-    queryset = Mission.objects.all()
+    queryset = Mission.objects.all()  
     serializer_class = MissionSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         user = self.request.user
-        return Mission.objects.filter(models.Q(cree_par=user) | models.Q(agent=user))
 
-    def perform_create(self, serializer):
-        serializer.save(cree_par=self.request.user)
+        qs = Mission.objects.filter(
+            models.Q(cree_par=user) |
+            models.Q(agent=user) |
+            models.Q(destinataire=user)
+        ).distinct()
+
+        # 🔹 Filtrage par type via query params
+        if self.request.query_params.get("type") == "destinataire":
+            qs = qs.filter(destinataire=user)
+
+        return qs
+
+        
+    @action(detail=True, methods=["get"], url_path="pdf")
+    def generate_pdf(self, request, pk=None):
+        mission = self.get_object()
+
+        data = {
+            "objet": mission.objet,
+            "lieu": mission.lieu,
+            "date_depart": mission.date_depart,
+            "date_retour": mission.date_retour,
+            "description": mission.description,
+            "cree_par": mission.cree_par.id if mission.cree_par else "",
+            "cree_par_nom": mission.cree_par.nom if mission.cree_par else "",
+        }
+
+        template = get_template("mission_template.html")
+        html = template.render(data)
+
+        result = io.BytesIO()
+        pdf = pisa.CreatePDF(io.StringIO(html), dest=result)
+
+        if pdf.err:
+            return Response({"error": "Erreur génération PDF"}, status=500)
+
+        response = HttpResponse(result.getvalue(), content_type="application/pdf")
+        response["Content-Disposition"] = f'attachment; filename=mission_{mission.id}.pdf'
+        return response
+
+    @action(detail=True, methods=["post"], url_path="approuver")
+    def approuver(self, request, pk=None):
+        mission = self.get_object()
+        mission.status = "Approuvée"
+        mission.approuve_par = request.user
+        mission.save()
+        return Response({"message": "Mission approuvée"})
+
+    @action(detail=True, methods=["post"], url_path="rejeter")
+    def rejeter(self, request, pk=None):
+        mission = self.get_object()
+        mission.status = "Rejetée"
+        mission.motif_rejet = request.data.get("motif_rejet", "")
+        mission.approuve_par = request.user
+        mission.save()
+        return Response({"message": "Mission rejetée"})
 
 
 class MissionGeneratePdfView(APIView):
@@ -166,8 +220,7 @@ class MissionGeneratePdfView(APIView):
         response["Content-Disposition"] = "attachment; filename=mission.pdf"
         return response
 
-    permission_classes = []  # tu peux mettre IsAuthenticated si besoin
-
+    permission_classes = []  
     def post(self, request):
         """
         Génère un PDF à partir des données envoyées dans request.data
