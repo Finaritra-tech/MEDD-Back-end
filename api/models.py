@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.contrib.auth.models import BaseUserManager
 from datetime import timedelta
+from django.utils import timezone
+
 
 class AgentManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
@@ -97,6 +99,18 @@ class Mission(models.Model):
         Agent, on_delete=models.SET_NULL,
         null=True, blank=True, related_name='destinatairee_missions'
     )
+
+    PROGRESSION_CHOICES = [
+        ('En cours', 'En cours'),
+        ('Terminée', 'Terminée'),
+    ]
+
+    progression = models.CharField(
+        max_length=20,
+        choices=PROGRESSION_CHOICES,
+        editable=False,
+        default='En cours'
+    )
     
 
     def save(self, *args, **kwargs):
@@ -104,6 +118,12 @@ class Mission(models.Model):
         if self.date_depart and self.date_retour:
             self.nbr_jours = (self.date_retour - self.date_depart).days + 1
         
+        # 🔹 Mise à jour automatique de la progression
+            today = timezone.now().date()
+            if self.date_retour < today:
+                self.progression = 'Terminée'
+            else:
+                self.progression = 'En cours'
         # Remplissage automatique du nom du créateur
         if self.cree_par:
             self.cree_par_nom = self.cree_par.nom

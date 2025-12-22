@@ -19,6 +19,8 @@ from .models import Agent, Mission
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.db import models
 
+from django.utils import timezone
+
 class AgentViewSet(viewsets.ModelViewSet):
     queryset = Agent.objects.all()
     serializer_class = AgentSerializer
@@ -82,6 +84,13 @@ class MissionViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
+        today = timezone.now().date()
+
+        # 🔹 Mise à jour automatique de la progression (DEV)
+        Mission.objects.filter(
+            date_retour__lt=today,
+            progression="En cours"
+        ).update(progression="Terminée")
 
         qs = Mission.objects.filter(
             models.Q(cree_par=user) |

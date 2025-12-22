@@ -30,5 +30,5 @@ class MissionSerializer(serializers.ModelSerializer):
             'id', 'agent', 'cree_par', 'cree_par_nom', 'objet', 'lieu',
             'date_depart', 'date_retour', 'nbr_jours', 'status',
             'description', 'motif_rejet', 'approuve_par', 
-            'destinataire', 'destinataire_nom', 'destinatairee'
+            'destinataire', 'destinataire_nom', 'destinatairee', 'progression',
         ]
