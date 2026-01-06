@@ -20,6 +20,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.db import models
 
 from django.utils import timezone
+from django.db.models import Count, Q
 
 class AgentViewSet(viewsets.ModelViewSet):
     queryset = Agent.objects.all()
@@ -352,3 +353,22 @@ class OMissionGeneratePdfView(APIView):
         response = HttpResponse(result.getvalue(), content_type="application/pdf")
         response["Content-Disposition"] = "attachment; filename=om.pdf"
         return response
+
+class AgentsEnCoursAPIView(APIView):
+    """
+    Retourne la liste des agents ayant des missions en cours
+    """
+    def get(self, request):
+        agents = Agent.objects.filter(missions__progression='En cours').distinct()
+        serializer = AgentSerializer(agents, many=True)
+        return Response(serializer.data)
+
+
+class TotalMissionsEnCoursAPIView(APIView):
+    """
+    Retourne le nombre total de missions en cours
+    """
+    def get(self, request):
+        total = Mission.objects.filter(progression='En cours').count()
+        return Response({"total_missions_en_cours": total})
+  

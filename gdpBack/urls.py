@@ -21,7 +21,7 @@ from api.views import AgentViewSet, LoginView, MissionViewSet
 from django.conf.urls.static import static
 from django.conf import settings
 from api.views import MissionGeneratePdfView, OMissionGeneratePdfView
-
+from api.views import AgentsEnCoursAPIView, TotalMissionsEnCoursAPIView
 
 
 
@@ -37,7 +37,8 @@ urlpatterns = [
     path('api/login/', LoginView.as_view(), name='login'),
     path('api/generate-mission-pdf/', MissionGeneratePdfView.as_view(), name='mission-pdf'),
     path('api/om-pdf/', OMissionGeneratePdfView.as_view(), name='om-pdf'),
-
+    path('api/agents-en-cours/', AgentsEnCoursAPIView.as_view(), name='agents-en-cours'),
+    path('api/missions-en-cours/total/', TotalMissionsEnCoursAPIView.as_view(), name='total-missions-en-cours'),
 ]
 
 if settings.DEBUG:
