@@ -21,6 +21,8 @@ from django.db import models
 
 from django.utils import timezone
 from django.db.models import Count, Q
+from rest_framework.decorators import api_view
+
 
 class AgentViewSet(viewsets.ModelViewSet):
     queryset = Agent.objects.all()
@@ -371,4 +373,15 @@ class TotalMissionsEnCoursAPIView(APIView):
     def get(self, request):
         total = Mission.objects.filter(progression='En cours').count()
         return Response({"total_missions_en_cours": total})
-  
+
+
+class MissionsParDirectionAPIView(APIView):
+    # permission_classes = [AllowAny]
+    def get(self, request):
+        stats = (
+            Mission.objects
+            .values("agent__direction")
+            .annotate(total=Count("id"))
+            .order_by("agent__direction")
+        )
+        return Response(stats)
