@@ -358,13 +358,16 @@ class OMissionGeneratePdfView(APIView):
 
 class AgentsEnCoursAPIView(APIView):
     """
-    Retourne la liste des agents ayant des missions en cours
+    Retourne la liste des agents, triés pour afficher ceux ayant des missions en cours avant les autres
     """
     def get(self, request):
-        agents = Agent.objects.filter(missions__progression='En cours').distinct()
+        # Annotation : on compte le nombre de missions en cours par agent
+        agents = Agent.objects.annotate(
+            missions_en_cours_count=Count('missions', filter=Q(missions__progression='En cours'))
+        ).order_by('-missions_en_cours_count', 'nom')  # Tri : d'abord ceux avec missions en cours, puis par nom
+
         serializer = AgentSerializer(agents, many=True)
         return Response(serializer.data)
-
 
 class TotalMissionsEnCoursAPIView(APIView):
     """
