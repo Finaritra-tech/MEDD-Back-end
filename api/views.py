@@ -30,12 +30,9 @@ class AgentViewSet(viewsets.ModelViewSet):
     parser_classes = (MultiPartParser, FormParser)
 
     def perform_create(self, serializer):
-        password = serializer.validated_data.pop('password')  # Récupère et retire le mot de passe
-        agent = serializer.save()
-        agent.set_password(password)  # Hash le mot de passe
-        agent.save()
+        agent = serializer.save()  # récupère l’instance créée
 
-        # Envoi email de confirmation
+        # Maintenant tu accèdes aux champs de l'instance
         subject = "Inscription réussie"
         message = f"Bonjour {agent.nom},\n\nVotre compte a été créé avec succès."
         from_email = "MEDD@gmail.com"
@@ -48,6 +45,7 @@ class AgentViewSet(viewsets.ModelViewSet):
             recipient_list,
             fail_silently=False,
         )
+
 
 class LoginView(APIView):
 
@@ -77,8 +75,6 @@ class LoginView(APIView):
             })
 
         return Response({'detail': 'Email ou mot de passe incorrect'}, status=status.HTTP_401_UNAUTHORIZED)
-
-
 
 class MissionViewSet(viewsets.ModelViewSet):
     queryset = Mission.objects.all()  
@@ -151,7 +147,6 @@ class MissionViewSet(viewsets.ModelViewSet):
         mission.approuve_par = request.user
         mission.save()
         return Response({"message": "Mission rejetée"})
-
 
 class MissionGeneratePdfView(APIView):
     permission_classes = []
@@ -376,7 +371,6 @@ class TotalMissionsEnCoursAPIView(APIView):
     def get(self, request):
         total = Mission.objects.filter(progression='En cours').count()
         return Response({"total_missions_en_cours": total})
-
 
 class MissionsParDirectionAPIView(APIView):
     # permission_classes = [AllowAny]

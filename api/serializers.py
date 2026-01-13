@@ -1,20 +1,35 @@
 from rest_framework import serializers
 from .models import Agent, Mission
 
+from rest_framework import serializers
+
 class AgentSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True, required=True, min_length=6)
-    missions_en_cours = serializers.SerializerMethodField()  # ✅ champ calculé
+    password = serializers.CharField(
+        write_only=True,
+        required=False,  # ⚠️ important
+        min_length=6
+    )
+    missions_en_cours = serializers.SerializerMethodField()
 
     class Meta:
         model = Agent
         fields = [
-            'id', 'nom', 'fonction', 'telephone', 'email', 'password', 
-            'photo', 'is_staff', 'direction', 'missions_en_cours'
+            'id', 'nom', 'fonction', 'telephone', 'email',
+            'password', 'photo', 'is_staff', 'direction',
+            'missions_en_cours'
         ]
         read_only_fields = ['is_staff', 'missions_en_cours']
 
+    def create(self, validated_data):
+        password = validated_data.pop('password')
+
+        user = Agent.objects.create_user(
+            password=password,
+            **validated_data
+        )
+        return user
+
     def get_missions_en_cours(self, obj):
-        # Filtre les missions "En cours" pour cet agent
         missions = obj.missions.filter(progression='En cours')
         return MissionEnCoursSerializer(missions, many=True).data
 
