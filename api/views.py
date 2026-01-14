@@ -70,7 +70,10 @@ class LoginView(APIView):
                     'id': user.id,
                     'nom': user.nom,
                     'email': user.email,
-                    'is_staff': user.is_staff
+                    'fonction': user.fonction,
+                    'direction': user.direction,
+                    'photo': user.photo.url if user.photo else None,
+                    'is_staff': user.is_staff,
                 }
             })
 
