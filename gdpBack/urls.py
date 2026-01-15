@@ -23,6 +23,7 @@ from django.conf import settings
 from api.views import MissionGeneratePdfView, OMissionGeneratePdfView
 from api.views import AgentsEnCoursAPIView, TotalMissionsEnCoursAPIView
 from api.views import MissionsParDirectionAPIView
+from  api.views import LogoutView
 
 
 router = routers.DefaultRouter()
@@ -39,6 +40,7 @@ urlpatterns = [
     path('api/agents-en-cours/', AgentsEnCoursAPIView.as_view(), name='agents-en-cours'),
     path('api/missions-en-cours/total/', TotalMissionsEnCoursAPIView.as_view(), name='total-missions-en-cours'),
     path('api/directionss/',MissionsParDirectionAPIView.as_view(),name='missions-par-direction'),
+    path('api/logout/', LogoutView.as_view(), name='logout'),
 ]
 
 if settings.DEBUG:

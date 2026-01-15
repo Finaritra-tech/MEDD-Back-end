@@ -41,11 +41,22 @@ class LoginSerializer(serializers.Serializer):
 
 class MissionSerializer(serializers.ModelSerializer):
     cree_par_nom = serializers.CharField(read_only=True)
-    destinataire = serializers.PrimaryKeyRelatedField(
-        queryset=Agent.objects.filter(is_staff=True),
+
+    # Filtrer les agents qui ne sont pas déjà en mission
+    agent = serializers.PrimaryKeyRelatedField(
+        queryset=Agent.objects.filter(is_active=True).exclude(
+            missions__progression='En cours'
+        )
+    )
+
+    destinatairee = serializers.PrimaryKeyRelatedField(
+        queryset=Agent.objects.filter(is_staff=True).exclude(
+            missions__progression='En cours'
+        ),
         allow_null=True,
         required=False
     )
+
     destinataire_nom = serializers.CharField(read_only=True)
 
     class Meta:
@@ -57,6 +68,15 @@ class MissionSerializer(serializers.ModelSerializer):
             'destinataire', 'destinataire_nom', 'destinatairee', 'progression',
         ]
 
+    def validate_agent(self, value):
+        if Mission.objects.filter(agent=value, progression='En cours').exists():
+            raise serializers.ValidationError("Cet agent est déjà en mission en cours.")
+        return value
+
+    def validate_destinatairee(self, value):
+        if value and Mission.objects.filter(agent=value, progression='En cours').exists():
+            raise serializers.ValidationError("Le destinataire est déjà en mission en cours.")
+        return value
 # serializers.py
 
 class MissionEnCoursSerializer(serializers.ModelSerializer):

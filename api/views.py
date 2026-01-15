@@ -17,6 +17,7 @@ import io
 
 from .models import Agent, Mission
 from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework_simplejwt.exceptions import TokenError
 from django.db import models
 
 from django.utils import timezone
@@ -385,3 +386,12 @@ class MissionsParDirectionAPIView(APIView):
             .order_by("agent__direction")
         )
         return Response(stats)
+
+
+
+class LogoutView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        # Ici, on ne fait rien côté serveur, juste informer le client
+        return Response({"detail": "Déconnexion réussie."}, status=status.HTTP_200_OK)
