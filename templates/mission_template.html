@@ -1,25 +1,97 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <style>
-        body { font-family: DejaVu Sans; }
-        h1 { text-align: center; }
-        .section { margin-top: 20px; }
-        .label { font-weight: bold; }
-    </style>
+<meta charset="UTF-8">
+<style>
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 12px;
+        margin: 50px 40px 80px 40px;
+        line-height: 1.5;
+    }
+
+    /* Header officiel */
+    header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .repoblika {
+        font-weight: bold;
+        font-size: 14px;
+    }
+
+    /* Date / Numéro */
+    .meta {
+        text-align: right;
+        margin-bottom: 20px;
+    }
+
+    /* Objet */
+    .objet {
+        text-decoration: underline;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+
+    /* Corps lettre */
+    .letter-body {
+        margin-top: 10px;
+    }
+
+    .letter-body p {
+        margin: 10px 0;
+    }
+
+    /* Footer */
+    footer {
+        position: fixed;
+        bottom: 20px;
+        width: 100%;
+        font-size: 10px;
+        text-align: center;
+        border-top: 1px solid #aaa;
+        padding-top: 5px;
+    }
+</style>
 </head>
 <body>
 
-<h1>Fiche de demande de mission : </h1>
-<div class="section">
-   
-    <p><span class="label">Objet :</span> {{ objet }}</p>
-    <p><span class="label">Lieu :</span> {{ lieu }}</p>
-    <p><span class="label">Date départ :</span> {{ date_depart }}</p>
-    <p><span class="label">Date retour :</span> {{ date_retour }}</p>
-    <p><span class="label">Créé par :</span> {{ cree_par }} - {{ cree_par_nom }}</p>
-    <p><span class="label">Description :</span> {{ description }}</p>
+<header>
+    <div class="repoblika">République de Madagascar</div>
+    <div>Ministère de l'Environnement et du Développement Durable</div>
+    <div>Direction de la Conservation et du Suivi de l'Information</div>
+</header>
+
+<div class="meta">
+    <p>Antananarivo, le {{ cree_le }}</p>
 </div>
+
+<div class="objet">
+    <p>Objet : Demande de mission</p>
+</div>
+
+<div class="letter-body">
+    <p>Je soussigné(e), <strong>{{ agent_nom }}</strong>, matricule <strong>{{ agent_matricule }}</strong>, 
+    exerçant la fonction de <strong>{{ agent_fonction }}</strong> au sein de la <strong>{{ agent_direction }}</strong>,</p>
+
+    <p>Sollicite l'autorisation de me rendre à <strong>{{ lieu }}</strong> pour effectuer la mission prévue 
+    du <strong>{{ date_depart }}</strong> au <strong>{{ date_retour }}</strong>, soit une durée de <strong>{{ nbr_jours }}</strong> jours.</p>
+
+    <p>Cette mission a pour objet : <strong>{{ objet }}</strong> et vise à : {{ description }}.</p>
+
+    <p>Je vous prie de bien vouloir prendre en considération cette demande et de m'accorder l'autorisation nécessaire.</p>
+</div>
+
+<div class="signature">
+    <p>Fait à Antananarivo, le {{ cree_le }}</p>
+    <br>
+    <p><strong>{{ agent_nom }}</strong></p>
+</div>
+
+<footer>
+    E-mail : <a href="mailto:{{agent_email}}">{{agent_email}}</a>
+</footer>
+
 </body>
 </html>

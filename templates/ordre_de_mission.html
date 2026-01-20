@@ -1,25 +1,36 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <style>
-        body { font-family: DejaVu Sans; }
-        h1 { text-align: center; }
-        .section { margin-top: 20px; }
-        .label { font-weight: bold; }
-    </style>
+<meta charset="UTF-8">
+<style>
+p{
+    padding: 1px;
+}
+</style>
 </head>
-<body>
+<body style="font-size: 16px ;margin:30px ; font-family: Arial, Helvetica, sans-serif;">
+<p style="font-size: 16px; position: absolute; z-index: 2; top: 277px; left: 635px;">{{ cree_le }}</p>
+<img src="data:image/jpeg;base64,{{ background_b64 }}" alt="" style="position: absolute; top: 0; left: 0; width: 100%; height : auto;" z-index="-1"/>
+<div class="content" style="position: absolute; z-index: 2; left: 50px; top: 540px ;">
+    
+    <p style="margin-bottom: 40px;"> <strong>N° <span style="text-decoration-line: underline;">{{ id }}</span>/25/MEDD/SG/DCSI</strong></p>
+    <p style="margin-bottom: 20px;"><u>Objet</u> : {{ objet }}</p>
 
-<h1>Ordre de Mission</h1>
-<div class="section">
-     <p><span>L'agent╰(*°▽°*)╯ </span>{{ agent}}</p>
-    <p><span class="label">Objet :</span> {{ objet }}</p>
-    <p><span class="label">Lieu :</span> {{ lieu }}</p>
-    <p><span class="label">Date départ :</span> {{ date_depart }}</p>
-    <p><span class="label">Date retour :</span> {{ date_retour }}</p>
-    <p><span class="label">Créé par :</span> {{ cree_par }} - {{ cree_par_nom }}</p>
-    <p><span class="label">Description :</span> {{ description }}</p>
+    <p style="line-height: 20px;">
+        Il est ordonné à : <strong>{{ agent_nom }}</strong>, 
+        <strong>{{ agent_matricule }}</strong>, 
+        <strong>{{ agent_fonction }}</strong>, 
+        au sein de <strong>{{ agent_direction }}</strong>,<br/>
+        <p>De se rendre à <strong>{{ lieu }}</strong>.</p>
+    </p>
+
+    <p><span style="text-decoration-line: underline; font-weight: bolder;">Période</span> : {{ nbr_jours }} jours</p>
+    <p>La durée de la mission est fixée à <strong>{{ nbr_jours }}</strong> jours.</p>
+    <p>En foi de quoi, le présent ordre de mission lui est délivré pour servir et valoir ce que de droit.</p>
 </div>
+<footer style="position:absolute; text-align: center; top: 1100px; left: 235px;">
+    <span>B.P 3948, Rue Toto RADOLA Antsahavola, Antananarivo 101 </span><br>
+    <span>E mail : <a href="spministre@environnement.mg">spministre@environnement.mg</a> ; <a class="webmail" href="https:/Webmail.environnement.mg">Webmail.environnement.mg</a></span>
+</footer>
 </body>
 </html>

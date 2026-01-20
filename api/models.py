@@ -22,6 +22,7 @@ class AgentManager(BaseUserManager):
         return self.create_user(email, password, **extra_fields)
 
 class Agent(AbstractBaseUser, PermissionsMixin):
+    matricule = models.CharField(max_length=20, unique=True, null=True, blank=True, default="pas de matricule")
     nom = models.CharField(max_length=100)
     fonction = models.CharField(max_length=100)
     telephone = models.CharField(max_length=15)

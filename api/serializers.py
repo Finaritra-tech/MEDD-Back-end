@@ -1,12 +1,13 @@
 from rest_framework import serializers
 from .models import Agent, Mission
 
+
 from rest_framework import serializers
 
 class AgentSerializer(serializers.ModelSerializer):
     password = serializers.CharField(
         write_only=True,
-        required=False,  # ⚠️ important
+        required=False,
         min_length=6
     )
     missions_en_cours = serializers.SerializerMethodField()
@@ -14,7 +15,7 @@ class AgentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Agent
         fields = [
-            'id', 'nom', 'fonction', 'telephone', 'email',
+            'id', 'matricule','nom', 'fonction', 'telephone', 'email',
             'password', 'photo', 'is_staff', 'direction',
             'missions_en_cours'
         ]
@@ -84,3 +85,21 @@ class MissionEnCoursSerializer(serializers.ModelSerializer):
         model = Mission
         fields = ['id', 'objet', 'date_depart', 'date_retour', 'progression']
         read_only_fields = ['id', 'objet', 'date_depart', 'date_retour', 'progression']
+
+# serializers.py
+
+class MissionMensuelleSerializer(serializers.ModelSerializer):
+    agent_nom = serializers.CharField(source='agent.nom', read_only=True)
+
+    class Meta:
+        model = Mission
+        fields = [
+            'id',
+            'objet',
+            'lieu',
+            'agent_nom',
+            'date_depart',
+            'date_retour',
+            'nbr_jours',
+            'status',
+        ]
