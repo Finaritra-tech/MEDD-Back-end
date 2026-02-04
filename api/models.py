@@ -30,6 +30,9 @@ class Agent(AbstractBaseUser, PermissionsMixin):
     photo = models.ImageField(upload_to='photos/', null=True, blank=True)
     DIRECTION_CHOICES = [
         ('SG', 'Secrétariat Général'),
+        ('cabinet','cabinet'),
+        ('OC-DVOR', 'Organe de Coordination des actions stratégiques pour la Diplomatie Verte et des Organismes Rattachés'),
+        ('PRMP', 'Personne Responsable des Marchés Publics'),
         ('DCSI', 'Direction de la Communication et des Systèmes d\'Information'),
         ('DAF', 'Direction Administrative et Financière'),
         ('DPSE', 'Direction de la Planification et du Suivi-Evaluation'),
@@ -38,8 +41,19 @@ class Agent(AbstractBaseUser, PermissionsMixin):
         ('DGGE', 'Direction Générale de la Gouvernance Environnementale'),
         ('DGDD', 'Direction Générale du Développement Durable'),
         ('ULC', 'Unité de Lutte contre la Corruption'),
+        ('DREDD', 'Direction Régional de l\'Environnement et du Developpement Durable'),
+        ('DDVP', 'Direction de la Diplomatie Verte et des Partenariats'),
+        ('UCOR', 'Unité de Coordination des Organismes Rattachés'),
+        ('UCREF', 'Unité de Coordination de la Recherche, de l\'Education et de la Formation'),
+        ('DMFD','Direction du Mécanisme de Financement Durable'),
+        ('DEVB', 'Direction d\'Appui à la Promotion de l\'Economie Verte et Bleue'),
+        ('DPRIDDD', 'Direction de la Promotion de la Recherche et de l\'Intégration de la Démarche de Développement Durable'),
+        ('DAPRNE', 'Directeur des Aires Protégées, des Ressources Naturelles renouvelables et des Ecosystème'),
+        ('DRGPF' , 'Directeur de Reboisement et de la Gestion des Paysages et des Forêts'),
+        ('DPDIDE', 'Directeur de la Gestion des Pollutions, des Déchets et de l\'Intégration de la Dimension Environnementale'),
     ]
-    direction = models.CharField(max_length=4, choices=DIRECTION_CHOICES)
+    direction = models.CharField(max_length=7, choices=DIRECTION_CHOICES)
+    superieur_hierarchique =models.CharField(max_length=20, unique=False, null=True, blank=True)
      # Champs Django obligatoires
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)

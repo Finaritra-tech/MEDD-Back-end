@@ -17,7 +17,7 @@ class AgentSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'matricule','nom', 'fonction', 'telephone', 'email',
             'password', 'photo', 'is_staff', 'direction',
-            'missions_en_cours'
+            'missions_en_cours', 'superieur_hierarchique'
         ]
         read_only_fields = ['is_staff', 'missions_en_cours']
 
@@ -50,13 +50,15 @@ class MissionSerializer(serializers.ModelSerializer):
         )
     )
 
-    destinatairee = serializers.PrimaryKeyRelatedField(
+    destinataire = serializers.PrimaryKeyRelatedField(
         queryset=Agent.objects.filter(is_staff=True).exclude(
             missions__progression='En cours'
         ),
-        allow_null=True,
+        allow_null=False,
         required=False
     )
+
+
 
     destinataire_nom = serializers.CharField(read_only=True)
 

@@ -299,6 +299,8 @@ class OMissionGeneratePdfView(APIView):
             "agent_matricule": agent.matricule,
             "agent_fonction": agent.fonction,
             "agent_direction": agent.get_direction_display(),
+            "annee_creation": mission.cree_le.strftime("%y"),
+            "superieur_hierarchique" : agent.superieur_hierarchique,
             "background_b64": background_b64,
         }
 
@@ -385,7 +387,7 @@ class MissionsParMoisView(APIView):
         serializer = MissionMensuelleSerializer(missions, many=True)
         return Response(serializer.data)        
 
-# class OMissionGeneratePdfView(APIView):
+
     permission_classes = []  # Pas de restriction pour l'instant
 
     def post(self, request):

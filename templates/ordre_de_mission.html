@@ -9,11 +9,12 @@ p{
 </style>
 </head>
 <body style="font-size: 16px ;margin:30px ; font-family: Arial, Helvetica, sans-serif;">
+    <p style="font-size: 16px; position: absolute; z-index: 2; top: 270px; left: 190px;">{{superieur_hierarchique}}</p>
+    <p style="font-size: 16px; position: absolute; z-index: 2; top: 320px; left: 120px; text-transform: uppercase;">{{ agent_direction }}</p>
 <p style="font-size: 16px; position: absolute; z-index: 2; top: 277px; left: 635px;">{{ cree_le }}</p>
 <img src="data:image/jpeg;base64,{{ background_b64 }}" alt="" style="position: absolute; top: 0; left: 0; width: 100%; height : auto;" z-index="-1"/>
-<div class="content" style="position: absolute; z-index: 2; left: 50px; top: 540px ;">
-    
-    <p style="margin-bottom: 40px;"> <strong>N° <span style="text-decoration-line: underline;">{{ id }}</span>/25/MEDD/SG/DCSI</strong></p>
+<div class="content" style="position: absolute; z-index: 2; left: 50px; top: 540px ;">    
+    <p style="margin-bottom: 40px;"> <strong>N° <span style="text-decoration-line: underline;">{{ id }}</span>/<span>{{annee_creation}}</span>/MEDD/SG/DCSI</strong></p>
     <p style="margin-bottom: 20px;"><u>Objet</u> : {{ objet }}</p>
 
     <p style="line-height: 20px;">
